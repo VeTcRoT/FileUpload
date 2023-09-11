@@ -32,6 +32,11 @@ namespace FilesUpload.Services
                 await blobClient.UploadAsync(stream, true);
             }
 
+            blobClient.SetMetadata(new Dictionary<string, string>
+            {
+                { "UserEmail", model.Email }
+            });
+
             return blobName;
         }
     }
