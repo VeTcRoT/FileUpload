@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using FilesUpload.Models
 @using FilesUpload.Services;
+@using System.ComponentModel.DataAnnotations;
 
 @inject IBlobService blobService
 
@@ -9,7 +10,17 @@
 <EditForm Model="@uploadModel" OnValidSubmit="UploadFile" class="file-upload-form">
     <DataAnnotationsValidator />
     
-    <ValidationMessage For="() => uploadModel.File" />
+    @if (fileValidationMessages.Count > 0)
+    {
+        foreach (string errorMessage in fileValidationMessages)
+        {
+            <div class="validation-message">@errorMessage</div>
+        }
+    }
+    else
+    {
+        <ValidationMessage For="() => uploadModel.File" />
+    }
     <InputFile type="file" class="form-control" accept=".docx" OnChange="HandleFileSelected" @key="inputFileId" />
     
     <ValidationMessage For="() => uploadModel.Email" />
@@ -27,10 +38,28 @@
     UploadModel uploadModel = new();
     string message = string.Empty;
     string inputFileId = Guid.NewGuid().ToString();
+    List<string> fileValidationMessages = new();
 
     void HandleFileSelected(InputFileChangeEventArgs eventArgs)
     {
-        uploadModel.File = eventArgs.File;
+        var tempModel = new UploadModel { File = eventArgs.File, Email = "test@localhost" };
+
+        var validationResults = new List<ValidationResult>();
+        if (!Validator.TryValidateObject(tempModel, new ValidationContext(tempModel), validationResults, true))
+        {
+            if (validationResults.Count > 0)
+            {
+                fileValidationMessages = validationResults.Select(v => v.ErrorMessage).ToList();
+                uploadModel.File = null!;
+            }
+        }
+        else
+        {
+            fileValidationMessages = new();
+            uploadModel.File = eventArgs.File;
+        }
+
+        StateHasChanged();
     }
 
     async Task UploadFile()

@@ -7,7 +7,6 @@ namespace FilesUpload.Models
     public class UploadModel
     {
         [Required(ErrorMessage = "File is required.")]
-        [DataType(DataType.Upload)]
         [AllowedExtensions(".docx")]
         [MaxFileSize(5000000)]
         public IBrowserFile File { get; set; } = null!;
