@@ -6,7 +6,7 @@
 
 <h3>Upload .docx File</h3>
 
-<EditForm Model="@uploadModel" class="file-upload-form">
+<EditForm Model="@uploadModel" OnValidSubmit="UploadFile" class="file-upload-form">
     <DataAnnotationsValidator />
     
     <ValidationMessage For="() => uploadModel.File" />
@@ -17,13 +17,26 @@
 
     <button type="submit" class="btn btn-primary">Upload</button>
 </EditForm>
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert-success" style="margin-top: 20px;">@message</div>
+}
 
 @code
 {
     UploadModel uploadModel = new();
+    string message = string.Empty;
 
     void HandleFileSelected(InputFileChangeEventArgs eventArgs)
     {
         uploadModel.File = eventArgs.File;
+    }
+
+    async Task UploadFile()
+    {
+        var blobName = await blobService.UploadFileAsync(uploadModel);
+        message = $"{uploadModel.File.Name} was saved to Azure Blob Storage. Check your email to get link to your file. File URL will be valid for 1 hour.";
+
+        StateHasChanged();
     }
 }
