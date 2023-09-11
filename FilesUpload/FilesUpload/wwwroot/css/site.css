@@ -32,6 +32,7 @@ a, .btn-link {
 
 .validation-message {
     color: red;
+    margin-bottom: 10px;
 }
 
 #blazor-error-ui {
@@ -62,3 +63,33 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.file-upload-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control {
+    margin-bottom: 20px;
+}
+
+.file-row {
+    background-color: #e4e4e4;
+    padding: 1rem 1.5rem;
+    margin-bottom: 20px;
+    border-radius: 0.6rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.file-row h2 {
+    margin: 0.3rem 0 0.6rem 0;
+    font-weight: bold;
+    color: black;
+    font-size: 1.1rem;
+}
+
+.file-row > div {
+    flex-grow: 1;
+}

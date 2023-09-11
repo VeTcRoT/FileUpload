@@ -1,9 +1,90 @@
 ﻿@page "/"
+@using FilesUpload.Models
+@using FilesUpload.Services;
+@using System.ComponentModel.DataAnnotations;
 
-<PageTitle>Index</PageTitle>
+@inject IBlobService blobService
 
-<h1>Hello, world!</h1>
+<h3>Upload .docx File</h3>
 
-Welcome to your new app.
+<EditForm Model="@uploadModel" OnValidSubmit="UploadFile" class="file-upload-form">
+    <DataAnnotationsValidator />
+    
+    @if (fileValidationMessages.Count > 0)
+    {
+        foreach (string errorMessage in fileValidationMessages)
+        {
+            <div class="validation-message">@errorMessage</div>
+        }
+    }
+    else
+    {
+        <ValidationMessage For="() => uploadModel.File" />
+    }
+    <InputFile type="file" class="form-control" accept=".docx" OnChange="HandleFileSelected" @key="inputFileId" />
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    @if (uploadModel.File != null && fileValidationMessages.Count == 0)
+    {
+        <FileDetails File="uploadModel.File" />
+    }
+    
+    <ValidationMessage For="() => uploadModel.Email" />
+    <InputText id="email" @bind-Value="uploadModel.Email" placeholder="Email" class="form-control" />
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert-@(fileSaved ? "success" : "danger")" style="margin-top: 20px;">@message</div>
+}
+
+@code
+{
+    UploadModel uploadModel = new();
+    string message = string.Empty;
+    string inputFileId = Guid.NewGuid().ToString();
+    List<string> fileValidationMessages = new();
+    bool fileSaved;
+
+    void HandleFileSelected(InputFileChangeEventArgs eventArgs)
+    {
+        var tempModel = new UploadModel { File = eventArgs.File, Email = "test@localhost" };
+
+        var validationResults = new List<ValidationResult>();
+        if (!Validator.TryValidateObject(tempModel, new ValidationContext(tempModel), validationResults, true))
+        {
+            if (validationResults.Count > 0)
+            {
+                fileValidationMessages = validationResults.Select(v => v.ErrorMessage).ToList();
+                uploadModel.File = null!;
+            }
+        }
+        else
+        {
+            fileValidationMessages = new();
+            uploadModel.File = eventArgs.File;
+        }
+
+        StateHasChanged();
+    }
+
+    async Task UploadFile()
+    {
+        try
+        {
+            var blobName = await blobService.UploadFileAsync(uploadModel);
+            message = $"{blobName} was saved to Azure Blob Storage. Check your email to get link to your file.";
+            fileSaved = true;
+        }
+        catch
+        {
+            message = "Unexpected error happend when saving your file. Please try again later.";
+            fileSaved = false;
+        }
+
+        inputFileId = Guid.NewGuid().ToString();
+        uploadModel = new();
+        StateHasChanged();
+    }
+}

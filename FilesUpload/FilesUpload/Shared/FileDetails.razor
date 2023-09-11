@@ -1,0 +1,16 @@
+﻿@code {
+    [Parameter] public IBrowserFile File { get; set; } = null!;
+}
+
+@{
+    var fileSizeMb = Math.Round(Convert.ToDouble(File.Size) / 1000000, 2);
+}
+
+<div class="file-row">
+    <div>
+        <h2>@File.Name</h2>
+        Size: <strong>@fileSizeMb MB</strong>;
+        Last modified: <strong>@File.LastModified</strong>;
+        Type: <strong>@File.ContentType</strong>
+    </div>
+</div>
