@@ -1,9 +1,20 @@
 ﻿@page "/"
+@using FilesUpload.Models
+<h3>Upload .docx File</h3>
 
-<PageTitle>Index</PageTitle>
+<EditForm Model="@uploadModel" class="file-upload-form">
+    <DataAnnotationsValidator />
+    
+    <ValidationMessage For="() => uploadModel.File" />
+    <InputFile type="file" class="form-control" accept=".docx" @bind-Value="uploadModel.File" />
+    
+    <ValidationMessage For="() => uploadModel.Email" />
+    <InputText id="email" @bind-Value="uploadModel.Email" placeholder="Email" class="form-control" />
 
-<h1>Hello, world!</h1>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</EditForm>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code
+{
+    UploadModel uploadModel = new();
+}
