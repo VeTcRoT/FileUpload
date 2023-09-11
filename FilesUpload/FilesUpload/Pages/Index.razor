@@ -33,9 +33,10 @@
 
     <button type="submit" class="btn btn-primary">Upload</button>
 </EditForm>
+
 @if (!string.IsNullOrEmpty(message))
 {
-    <div class="alert-success" style="margin-top: 20px;">@message</div>
+    <div class="alert-@(fileSaved ? "success" : "danger")" style="margin-top: 20px;">@message</div>
 }
 
 @code
@@ -44,6 +45,7 @@
     string message = string.Empty;
     string inputFileId = Guid.NewGuid().ToString();
     List<string> fileValidationMessages = new();
+    bool fileSaved;
 
     void HandleFileSelected(InputFileChangeEventArgs eventArgs)
     {
@@ -69,8 +71,17 @@
 
     async Task UploadFile()
     {
-        //var blobName = await blobService.UploadFileAsync(uploadModel);
-        message = $"{uploadModel.File.Name} was saved to Azure Blob Storage. Check your email to get link to your file. File URL will be valid for 1 hour.";
+        try
+        {
+            var blobName = await blobService.UploadFileAsync(uploadModel);
+            message = $"{blobName} was saved to Azure Blob Storage. Check your email to get link to your file.";
+            fileSaved = true;
+        }
+        catch
+        {
+            message = "Unexpected error happend when saving your file. Please try again later.";
+            fileSaved = false;
+        }
 
         inputFileId = Guid.NewGuid().ToString();
         uploadModel = new();
