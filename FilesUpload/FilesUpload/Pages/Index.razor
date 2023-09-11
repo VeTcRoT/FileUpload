@@ -22,6 +22,11 @@
         <ValidationMessage For="() => uploadModel.File" />
     }
     <InputFile type="file" class="form-control" accept=".docx" OnChange="HandleFileSelected" @key="inputFileId" />
+
+    @if (uploadModel.File != null && fileValidationMessages.Count == 0)
+    {
+        <FileDetails File="uploadModel.File" />
+    }
     
     <ValidationMessage For="() => uploadModel.Email" />
     <InputText id="email" @bind-Value="uploadModel.Email" placeholder="Email" class="form-control" />
