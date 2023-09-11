@@ -10,7 +10,7 @@
     <DataAnnotationsValidator />
     
     <ValidationMessage For="() => uploadModel.File" />
-    <InputFile type="file" class="form-control" accept=".docx" OnChange="HandleFileSelected" />
+    <InputFile type="file" class="form-control" accept=".docx" OnChange="HandleFileSelected" @key="inputFileId" />
     
     <ValidationMessage For="() => uploadModel.Email" />
     <InputText id="email" @bind-Value="uploadModel.Email" placeholder="Email" class="form-control" />
@@ -26,6 +26,7 @@
 {
     UploadModel uploadModel = new();
     string message = string.Empty;
+    string inputFileId = Guid.NewGuid().ToString();
 
     void HandleFileSelected(InputFileChangeEventArgs eventArgs)
     {
@@ -34,9 +35,11 @@
 
     async Task UploadFile()
     {
-        var blobName = await blobService.UploadFileAsync(uploadModel);
+        //var blobName = await blobService.UploadFileAsync(uploadModel);
         message = $"{uploadModel.File.Name} was saved to Azure Blob Storage. Check your email to get link to your file. File URL will be valid for 1 hour.";
 
+        inputFileId = Guid.NewGuid().ToString();
+        uploadModel = new();
         StateHasChanged();
     }
 }
