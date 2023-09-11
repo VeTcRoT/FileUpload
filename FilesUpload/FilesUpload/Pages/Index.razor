@@ -1,12 +1,16 @@
 ﻿@page "/"
 @using FilesUpload.Models
+@using FilesUpload.Services;
+
+@inject IBlobService blobService
+
 <h3>Upload .docx File</h3>
 
 <EditForm Model="@uploadModel" class="file-upload-form">
     <DataAnnotationsValidator />
     
     <ValidationMessage For="() => uploadModel.File" />
-    <InputFile type="file" class="form-control" accept=".docx" @bind-Value="uploadModel.File" />
+    <InputFile type="file" class="form-control" accept=".docx" OnChange="HandleFileSelected" />
     
     <ValidationMessage For="() => uploadModel.Email" />
     <InputText id="email" @bind-Value="uploadModel.Email" placeholder="Email" class="form-control" />
@@ -17,4 +21,9 @@
 @code
 {
     UploadModel uploadModel = new();
+
+    void HandleFileSelected(InputFileChangeEventArgs eventArgs)
+    {
+        uploadModel.File = eventArgs.File;
+    }
 }
