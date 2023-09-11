@@ -32,6 +32,7 @@ a, .btn-link {
 
 .validation-message {
     color: red;
+    margin-bottom: 10px;
 }
 
 #blazor-error-ui {
@@ -62,3 +63,12 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.file-upload-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control {
+    margin-bottom: 20px;
+}

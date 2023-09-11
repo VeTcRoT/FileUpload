@@ -2,12 +2,12 @@
 @using FilesUpload.Models
 <h3>Upload .docx File</h3>
 
-<EditForm Model="@uploadModel">
+<EditForm Model="@uploadModel" class="file-upload-form">
     <DataAnnotationsValidator />
     
-    <InputFile type="file" class="form-control" accept=".docx" @bind-Value="uploadModel.File" />
     <ValidationMessage For="() => uploadModel.File" />
-
+    <InputFile type="file" class="form-control" accept=".docx" @bind-Value="uploadModel.File" />
+    
     <ValidationMessage For="() => uploadModel.Email" />
     <InputText id="email" @bind-Value="uploadModel.Email" placeholder="Email" class="form-control" />
 
